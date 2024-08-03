@@ -1,18 +1,14 @@
-import { View, Text, SafeAreaView, Image, Pressable } from 'react-native'
-import React, { useState } from 'react'
-import { Ionicons } from '@expo/vector-icons'
+import { View, Text, Image, Pressable } from 'react-native'
+import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DeviceConnectionIndicator from '@/components/DeviceConnectionIndicator';
 
 export default function index() {
-  
-    const [isDeviceConnected, setIsDeviceConnected] = useState(false);
 
   return (
-    <SafeAreaView style={{
-        // paddingTop: "5%"
-    }}>
+    <SafeAreaView>
         <View style={{
             display: "flex",
-            // justifyContent: "center",
             alignItems: "center",
             width: "100%",
             height: "100%",
@@ -42,36 +38,7 @@ export default function index() {
             }}>Welcome farmer!</Text>
 
             {/* Device connection status */}
-            <View style={{
-                width: "100%",
-                padding: 20,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: isDeviceConnected? "#0DB1AD10": "#D2416E10",
-                borderRadius: 12,
-                justifyContent: "space-around"
-            }}>
-                <Ionicons name={isDeviceConnected? 'link': 'unlink'} size={24} />
-                <Text style={{
-                    color: isDeviceConnected? "#0DB1AD": "#D2416E",
-                    fontSize: 20
-                }}>{isDeviceConnected? "Device Connected": "Device Disconnected"}</Text>
-
-                <Pressable
-                    style={{
-                        backgroundColor: isDeviceConnected? "#D2416E10": "#0DB1AD10",
-                        padding: 10,
-                        borderRadius: 100
-                    }}
-                    onPress={() => setIsDeviceConnected(!isDeviceConnected)}
-                >
-                    <Text style={{
-                        color: isDeviceConnected? "#D2416E": "#0DB1AD",
-                        fontSize: 18
-                    }}>{isDeviceConnected? "Disconnect": "Connect"}</Text>
-                </Pressable>
-            </View>
+            <DeviceConnectionIndicator />
 
             {/* Test vs History Tabs */}
             <View>
