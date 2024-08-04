@@ -1,8 +1,10 @@
 import { View, Text, Pressable, Image } from "react-native";
 import React, { useState } from "react";
+import { useDeviceConnectivityContext } from "@/context/DeviceConnectivityContext";
 
 export default function HomeTabs() {
   const [activeTab, setActiveTab] = useState<number>(0);
+  const deviceConnectionContext = useDeviceConnectivityContext();
 
   return (
     <View className="w-full gap-y-3">
@@ -43,8 +45,10 @@ export default function HomeTabs() {
               <Text className="text-grey-text text-lg">
                 Test your soil for analysis
               </Text>
-              <Pressable className="rounded-md bg-lime-400 mt-4 w-full px-6 items-center py-3">
-                <Text className="text-lg text-white font-semibold">
+              <Pressable
+                className={`rounded-md ${deviceConnectionContext?.isDeviceConnected ? "bg-lime-400" : "bg-gray-300"} mt-4 w-full px-6 items-center py-3`}
+              >
+                <Text className={`text-lg text-white font-semibold`}>
                   Get Started
                 </Text>
               </Pressable>
