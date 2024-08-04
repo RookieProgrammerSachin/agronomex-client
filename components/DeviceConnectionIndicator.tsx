@@ -7,7 +7,7 @@ export default function DeviceConnectionIndicator() {
   return (
     <View style={{
         width: "100%",
-        padding: 20,
+        padding: 15,
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
@@ -25,6 +25,7 @@ export default function DeviceConnectionIndicator() {
             style={{
                 backgroundColor: isDeviceConnected? "#D2416E10": "#0DB1AD10",
                 padding: 10,
+                paddingHorizontal: 20,
                 borderRadius: 100
             }}
             onPress={() => setIsDeviceConnected(!isDeviceConnected)}

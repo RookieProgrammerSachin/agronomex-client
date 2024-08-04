@@ -2,6 +2,7 @@ import { View, Text, Image, Pressable } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeviceConnectionIndicator from '@/components/DeviceConnectionIndicator';
+import HomeTabs from '@/components/HomeTabs';
 
 export default function index() {
 
@@ -41,22 +42,8 @@ export default function index() {
             <DeviceConnectionIndicator />
 
             {/* Test vs History Tabs */}
-            <View>
-                {/* Tabs container */}
-                <View>
-                    <Pressable>
-                        <Text>Test</Text>
-                    </Pressable>
-                    <Pressable>
-                        <Text>History</Text>
-                    </Pressable>
-                </View>
-
-                {/* Content box */}
-                <View>
-
-                </View>
-            </View>
+            <HomeTabs />
+            
         </View>
         </SafeAreaView>
   )
