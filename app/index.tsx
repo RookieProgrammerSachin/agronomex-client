@@ -11,7 +11,7 @@ export default function Index() {
   // useEffect(() => {
   //   router.push("/home")
   // }, [])
-  return <Redirect href={"/home"} />
+  // return <Redirect href={"/home"} />
 
   return (
     <View
@@ -19,7 +19,7 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "white"
+        backgroundColor: "white",
       }}
     >
       <Image source={require("@/assets/images/logo.png")} />
