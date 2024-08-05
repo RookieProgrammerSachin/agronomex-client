@@ -1,10 +1,17 @@
 import { View, Text, Pressable, Image } from "react-native";
 import React, { useState } from "react";
 import { useDeviceConnectivityContext } from "@/context/DeviceConnectivityContext";
+import { router } from "expo-router";
 
 export default function HomeTabs() {
   const [activeTab, setActiveTab] = useState<number>(0);
   const deviceConnectionContext = useDeviceConnectivityContext();
+
+  /** Actual routine that kick starts the soil testing process */
+  function startTestRoutine() {
+    // For now, there is no testing logic, but will fill up soon
+    return router.push("/results");
+  }
 
   return (
     <View className="w-full gap-y-3">
@@ -47,9 +54,10 @@ export default function HomeTabs() {
               </Text>
               <Pressable
                 className={`rounded-md ${deviceConnectionContext?.isDeviceConnected ? "bg-lime-400" : "bg-gray-300"} mt-4 w-full px-6 items-center py-3`}
+                onPress={startTestRoutine}
               >
                 <Text className={`text-lg text-white font-semibold`}>
-                  Get Started
+                  Test now
                 </Text>
               </Pressable>
             </>
