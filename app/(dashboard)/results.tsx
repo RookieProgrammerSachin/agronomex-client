@@ -2,6 +2,8 @@ import { View, Text, ScrollView } from "react-native";
 import React from "react";
 import { DashboardLayout } from "@/components/layout";
 import Header from "@/components/Header";
+import Button from "@/components/Button";
+import { router } from "expo-router";
 
 type NutrientInfoBoxType = {
   nutrientFormula: string;
@@ -23,7 +25,7 @@ function NutrientInfoBox({
   return (
     <View
       className={
-        "w-48 h-48 p-4 flex m-3 rounded-lg " +
+        "w-40 h-40 p-4 flex m-2 rounded-lg " +
         boxColor +
         ` shadow-lg shadow-[${boxColor}]/40`
       }
@@ -45,13 +47,32 @@ function NutrientInfoBox({
 }
 
 export default function results() {
+  const nutrientsInfo = [
+    {
+      boxColor: "bg-[#B1840D10]",
+      textColor: "text-[#B1840D]",
+      nutrientFormula: "N",
+      nutrientName: "Nitrogen",
+      nutrientQty: "78",
+      nutrientUnit: "kg/ha",
+    },
+  ];
+
   return (
     <DashboardLayout>
       <Header />
       <Text className="text-2xl text-left w-full">Results</Text>
 
-      <ScrollView className="w-full">
-        <View className="flex flex-row flex-wrap justify-center w-full">
+      <View className={`flex flex-row flex-wrap justify-center w-full flex-1`}>
+        <ScrollView
+          className={`w-full h-full flex-1 flex-row flex-wrap`}
+          contentContainerStyle={{
+            justifyContent: "center",
+            flex: 1,
+            flexDirection: "row",
+            flexWrap: "wrap",
+          }}
+        >
           <NutrientInfoBox
             boxColor="bg-[#B1840D10]"
             textColor="text-[#B1840D]"
@@ -100,8 +121,16 @@ export default function results() {
             nutrientQty="78"
             nutrientUnit="%"
           />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
+      <View className="flex-col gap-y-1 items-center w-full">
+        <Button onPress={() => router.push("/fertilizer-recomm")}>
+          Suggest Crops
+        </Button>
+        <Button onPress={() => router.push("/crop-recomm")}>
+          Suggest Fertilizers
+        </Button>
+      </View>
     </DashboardLayout>
   );
 }

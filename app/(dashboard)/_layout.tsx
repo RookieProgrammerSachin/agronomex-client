@@ -18,6 +18,18 @@ export default function Layout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="crop-recomm"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="fertilizer-recomm"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </DeviceConnectivityContextProvider>
   );

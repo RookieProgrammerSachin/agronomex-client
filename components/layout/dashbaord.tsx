@@ -14,6 +14,7 @@ export default function dashbaord({ children }: React.PropsWithChildren) {
           gap: 20,
           backgroundColor: "white",
           paddingHorizontal: 20,
+          paddingBottom: 8,
         }}
       >
         {children}

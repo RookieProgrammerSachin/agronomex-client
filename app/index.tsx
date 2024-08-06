@@ -11,7 +11,7 @@ export default function Index() {
   // useEffect(() => {
   //   router.push("/home")
   // }, [])
-  return <Redirect href={"/results"} />;
+  // return <Redirect href={"/results"} />;
 
   return (
     <View
