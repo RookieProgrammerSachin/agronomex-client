@@ -35,13 +35,13 @@ export default function Header() {
           <Image source={require("@/assets/images/user.png")} />
         </TouchableOpacity>
       </View>
-      <Text
+      {/* <Text
         style={{
           fontSize: 20,
         }}
       >
         Welcome farmer!
-      </Text>
+      </Text> */}
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { View, Text, Pressable, PressableProps } from "react-native";
 import React, { PropsWithChildren } from "react";
+import { cn } from "@/utils/cn";
 
 type ButtonPropsType = Partial<{
   disabled: boolean;
@@ -22,7 +23,10 @@ export default function Button({
 }: ButtonPropsType) {
   return (
     <Pressable
-      className={`rounded-md ${!disabled ? "bg-lime-400" : "bg-gray-300"} mt-4 ${fullWidth ? "w-full" : "w-unset"} px-6 items-center py-3`}
+      className={cn(
+        `rounded-md ${!disabled ? bgActive : bgDisabled} mt-4 ${fullWidth ? "w-full" : "w-unset"} px-6 items-center py-3`,
+        className,
+      )}
       onPress={onPress}
     >
       {typeof children === "string" ? (
