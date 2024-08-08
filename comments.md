@@ -3,3 +3,4 @@
 ### Ofcourse should be updated manually
 
 1. app/(dashboard)/results.tsx
+2. components/Switch.tsx

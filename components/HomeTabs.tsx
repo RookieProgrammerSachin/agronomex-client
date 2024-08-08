@@ -54,6 +54,7 @@ export default function HomeTabs() {
               </Text>
               <Pressable
                 className={`rounded-md ${deviceConnectionContext?.isDeviceConnected ? "bg-lime-400" : "bg-gray-300"} mt-4 w-full px-6 items-center py-3`}
+                disabled={!deviceConnectionContext?.isDeviceConnected}
                 onPress={startTestRoutine}
               >
                 <Text className={`text-lg text-white font-semibold`}>

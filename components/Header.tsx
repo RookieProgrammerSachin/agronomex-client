@@ -1,5 +1,6 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
+import { router } from "expo-router";
 
 export default function Header() {
   return (
@@ -20,15 +21,19 @@ export default function Header() {
           style={{
             display: "flex",
             width: 150,
+            alignSelf: "center",
           }}
         />
-        <Image
-          source={require("@/assets/images/user.png")}
+        <TouchableOpacity
           style={{
             display: "flex",
-            marginLeft: "auto",
+            position: "absolute",
+            right: "1%",
           }}
-        />
+          onPress={() => router.push("/settings")}
+        >
+          <Image source={require("@/assets/images/user.png")} />
+        </TouchableOpacity>
       </View>
       <Text
         style={{

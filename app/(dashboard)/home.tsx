@@ -8,7 +8,7 @@ import { DashboardLayout } from "@/components/layout";
 import { Redirect } from "expo-router";
 
 export default function index() {
-  // return <Redirect href={"/results"} />;
+  // return <Redirect href={"/settings"} />;
 
   return (
     <DashboardLayout>

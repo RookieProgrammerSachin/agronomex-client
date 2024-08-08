@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Link, Redirect, router } from "expo-router";
 import { useEffect } from "react";
 import { Image, Text, View } from "react-native";
@@ -23,8 +24,8 @@ export default function Index() {
       }}
     >
       <Image source={require("@/assets/images/logo.png")} />
-      <Link href={"/login"}>
-        <Text>Login to your account</Text>
+      <Link href={"/login"} className="mt-6">
+        <Ionicons name="arrow-forward-outline" size={30} />
       </Link>
     </View>
   );
