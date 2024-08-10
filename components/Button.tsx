@@ -24,8 +24,10 @@ export default function Button({
   return (
     <Pressable
       className={cn(
-        `rounded-md ${!disabled ? bgActive : bgDisabled} mt-4 ${fullWidth ? "w-full" : "w-unset"} px-6 items-center py-3`,
+        `rounded-md mt-4 px-6 items-center py-3`,
         className,
+        bgDisabled,
+        { [bgActive]: !disabled, "w-full": fullWidth },
       )}
       onPress={onPress}
     >

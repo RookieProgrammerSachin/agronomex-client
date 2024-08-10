@@ -31,7 +31,7 @@ function NutrientInfoBox({
       }
     >
       <View className="flex flex-row items-end gap-x-4">
-        <Text className={"text-4xl font-semibold " + textColor}>
+        <Text className={"text-3xl font-semibold " + textColor}>
           {nutrientFormula}
         </Text>
         <Text className={"text-lg font-semibold " + textColor}>
@@ -125,10 +125,10 @@ export default function results() {
       </View>
       <View className="flex-col gap-y-1 items-center w-full">
         <Button onPress={() => router.push("/fertilizer-recomm")}>
-          Suggest Crops
+          Suggest Fertilizers
         </Button>
         <Button onPress={() => router.push("/crop-recomm")}>
-          Suggest Fertilizers
+          Suggest Crop
         </Button>
       </View>
     </DashboardLayout>
