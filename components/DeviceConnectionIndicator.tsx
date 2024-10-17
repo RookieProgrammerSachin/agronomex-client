@@ -1,10 +1,14 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useDeviceConnectivityContext } from "@/context/DeviceConnectivityContext";
+import { useDeviceConnectivityContext } from "@/hooks/useDeviceConnectivityContext";
 
 export default function DeviceConnectionIndicator() {
   const deviceConnectionContext = useDeviceConnectivityContext();
+
+  useEffect(() => {
+    deviceConnectionContext?.getIPAddress();
+  }, []);
 
   return (
     <View
@@ -25,18 +29,23 @@ export default function DeviceConnectionIndicator() {
         name={deviceConnectionContext?.isDeviceConnected ? "link" : "unlink"}
         size={24}
       />
-      <Text
-        style={{
-          color: deviceConnectionContext?.isDeviceConnected
-            ? "#0DB1AD"
-            : "#D2416E",
-          fontSize: 20,
-        }}
-      >
-        {deviceConnectionContext?.isDeviceConnected
-          ? "Device Connected"
-          : "Device Disconnected"}
-      </Text>
+      <View className="flex flex-col">
+        <Text
+          style={{
+            color: deviceConnectionContext?.isDeviceConnected
+              ? "#0DB1AD"
+              : "#D2416E",
+            fontSize: 20,
+          }}
+        >
+          {deviceConnectionContext?.isDeviceConnected
+            ? "Device Connected"
+            : "Device Disconnected"}
+        </Text>
+        {deviceConnectionContext?.isDeviceConnected && (
+          <Text>{deviceConnectionContext.deviceName}</Text>
+        )}
+      </View>
 
       <Pressable
         style={{

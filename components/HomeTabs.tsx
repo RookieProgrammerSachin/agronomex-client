@@ -1,7 +1,7 @@
 import { View, Text, Pressable, Image } from "react-native";
 import React, { useState } from "react";
-import { useDeviceConnectivityContext } from "@/context/DeviceConnectivityContext";
 import { router } from "expo-router";
+import { useDeviceConnectivityContext } from "@/hooks/useDeviceConnectivityContext";
 
 export default function HomeTabs() {
   const [activeTab, setActiveTab] = useState<number>(0);

@@ -1,27 +1,36 @@
+import useNetworkConnection from "@/hooks/useNetworkConnection";
 import { createContext, useContext, useState } from "react";
 
 type DeviceConnectivityContextType = {
   isDeviceConnected: boolean;
   setIsDeviceConnected: React.Dispatch<React.SetStateAction<boolean>>;
+  ipAddress: string | null;
+  getIPAddress: () => Promise<void>;
+  deviceName: string;
 } | null;
 
-const DeviceConnectivityContext =
+export const DeviceConnectivityContext =
   createContext<DeviceConnectivityContextType>(null);
 
-export function useDeviceConnectivityContext() {
-  return useContext(DeviceConnectivityContext);
+function getDeviceName() {
+  return "IOT-001";
 }
 
 export function DeviceConnectivityContextProvider({
   children,
 }: React.PropsWithChildren) {
   const [isDeviceConnected, setIsDeviceConnected] = useState(false);
+  const { IPAddress, getIPAddress } = useNetworkConnection();
+  const deviceName = getDeviceName();
 
   return (
     <DeviceConnectivityContext.Provider
       value={{
         isDeviceConnected,
         setIsDeviceConnected,
+        ipAddress: IPAddress,
+        getIPAddress,
+        deviceName,
       }}
     >
       {children}
