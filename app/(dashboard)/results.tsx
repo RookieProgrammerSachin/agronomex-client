@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { DashboardLayout } from "@/components/layout";
 import Header from "@/components/Header";
 import Button from "@/components/Button";
@@ -47,75 +47,118 @@ function NutrientInfoBox({
   );
 }
 
-const nutrientsInfo = [
-  {
-    boxColor: "bg-[#B1840D10]",
-    textColor: "text-[#B1840D]",
-    nutrientFormula: "N",
-    nutrientName: "Nitrogen",
-    nutrientQty: "78",
-    nutrientUnit: "kg/ha",
-  },
-  {
-    boxColor: "bg-[#7042C910]",
-    textColor: "text-[#7042C9]",
-    nutrientFormula: "P",
-    nutrientName: "Phosphorus",
-    nutrientQty: "124",
-    nutrientUnit: "kg/ha",
-  },
-  {
-    boxColor: "bg-[#0DB1AD10]",
-    textColor: "text-[#0DB1AD]",
-    nutrientFormula: "K",
-    nutrientName: "Potassium",
-    nutrientQty: "99",
-    nutrientUnit: "kg/ha",
-  },
-  {
-    boxColor: "bg-[#63B10D10]",
-    textColor: "text-[#63B10D]",
-    nutrientFormula: "pH",
-    nutrientName: "",
-    nutrientQty: "8.01",
-    nutrientUnit: "",
-  },
-  {
-    boxColor: "bg-[#D2416E10]",
-    textColor: "text-[#D2416E]",
-    nutrientFormula: "Temp",
-    nutrientName: "",
-    nutrientQty: "36",
-    nutrientUnit: "C",
-  },
-  {
-    boxColor: "bg-[#197BD210]",
-    textColor: "text-[#197BD2]",
-    nutrientFormula: "Humidity",
-    nutrientName: "",
-    nutrientQty: "78",
-    nutrientUnit: "%",
-  },
-];
-
 export default function results() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<null | { error: string }>(null);
   const [cropsdata, setCropsData] = useState(null);
   const [isCropsLoading, setIsCropsLoading] = useState(false);
-  const [croperror, setCropError] = useState<null | { error: string }>(null);
+  const [cropError, setCropError] = useState<null | { error: string }>(null);
+
+  const nutrientsInfo = useMemo(() => {
+    const nutrientsInfo = [
+      {
+        boxColor: "bg-[#B1840D10]",
+        textColor: "text-[#B1840D]",
+        nutrientFormula: "N",
+        nutrientName: "Nitrogen",
+        nutrientQty: "78",
+        nutrientUnit: "kg/ha",
+      },
+      {
+        boxColor: "bg-[#7042C910]",
+        textColor: "text-[#7042C9]",
+        nutrientFormula: "P",
+        nutrientName: "Phosphorus",
+        nutrientQty: "124",
+        nutrientUnit: "kg/ha",
+      },
+      {
+        boxColor: "bg-[#0DB1AD10]",
+        textColor: "text-[#0DB1AD]",
+        nutrientFormula: "K",
+        nutrientName: "Potassium",
+        nutrientQty: "99",
+        nutrientUnit: "kg/ha",
+      },
+      {
+        boxColor: "bg-[#63B10D10]",
+        textColor: "text-[#63B10D]",
+        nutrientFormula: "pH",
+        nutrientName: "",
+        nutrientQty: "8.01",
+        nutrientUnit: "",
+      },
+      {
+        boxColor: "bg-[#D2416E10]",
+        textColor: "text-[#D2416E]",
+        nutrientFormula: "Temp",
+        nutrientName: "",
+        nutrientQty: "36",
+        nutrientUnit: "C",
+      },
+      {
+        boxColor: "bg-[#197BD210]",
+        textColor: "text-[#197BD2]",
+        nutrientFormula: "Humidity",
+        nutrientName: "",
+        nutrientQty: "78",
+        nutrientUnit: "%",
+      },
+    ];
+
+    // Define ranges for each nutrient
+    const ranges = {
+      N: { min: 70, max: 90 },
+      P: { min: 80, max: 130 },
+      K: { min: 70, max: 110 },
+      pH: { min: 6, max: 9 },
+      Temp: { min: 32, max: 45 },
+      Humidity: { min: 60, max: 90 },
+    };
+
+    // Function to generate a random number within a given range with up to 2 decimal places
+    function getRandomInRange(min: number, max: number) {
+      return (Math.random() * (max - min) + min).toFixed(2);
+    }
+
+    // Modify the nutrientQty based on the defined ranges
+    nutrientsInfo.forEach((nutrient) => {
+      const { nutrientFormula } = nutrient;
+      if (
+        // @ts-expect-error chi
+        ranges[
+          nutrientFormula as (typeof nutrientsInfo)[number]["nutrientFormula"]
+        ]
+      ) {
+        // @ts-expect-error chi
+        const { min, max } = ranges[nutrientFormula];
+        nutrient.nutrientQty = getRandomInRange(min, max);
+      }
+    });
+
+    return nutrientsInfo;
+  }, []);
 
   async function getFertilizerSuggestions() {
     try {
       setIsLoading(true);
       setError(null);
-      const fertilizerSuggestionsRequest = await fetch(API_URL + "/", {
-        method: "POST",
-        body: JSON.stringify({
-          ellam: "bs",
-        }),
-      });
+      const fertilizerSuggestionsRequest = await fetch(
+        API_URL + "/fertilizers",
+        {
+          method: "POST",
+          body: JSON.stringify(
+            nutrientsInfo.map((nutr) => ({
+              nutrient: nutr.nutrientFormula,
+              value: nutr.nutrientQty,
+            })),
+          ),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
       const fertilizerSuggestionsResponse =
         await fertilizerSuggestionsRequest.json();
       console.log(
@@ -159,11 +202,17 @@ export default function results() {
     try {
       setIsCropsLoading(true);
       setCropError(null);
-      const cropSuggestionsRequest = await fetch(API_URL + "/", {
+      const cropSuggestionsRequest = await fetch(API_URL + "/crops", {
         method: "POST",
-        body: JSON.stringify({
-          ellam: "bs",
-        }),
+        body: JSON.stringify(
+          nutrientsInfo.map((nutr) => ({
+            nutrient: nutr.nutrientFormula,
+            value: nutr.nutrientQty,
+          })),
+        ),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       const cropSuggestionsResponse = await cropSuggestionsRequest.json();
       console.log(
@@ -176,7 +225,7 @@ export default function results() {
       }
       if (cropSuggestionsRequest.ok) {
         setCropsData(cropSuggestionsResponse);
-        router.push("/fertilizer-recomm");
+        router.push("/crop-recomm");
       } else {
         Alert.alert("Error", cropSuggestionsResponse.error);
         setCropError({ error: cropSuggestionsResponse.error });
