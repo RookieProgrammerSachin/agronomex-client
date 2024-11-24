@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, Alert } from "react-native";
-import React, { useMemo, useState } from "react";
-import { DashboardLayout } from "@/components/layout";
-import Header from "@/components/Header";
 import Button from "@/components/Button";
-import { router } from "expo-router";
+import Header from "@/components/Header";
+import { DashboardLayout } from "@/components/layout";
 import { API_URL } from "@/constants/url";
+import { useNutrientResultContext } from "@/context/NutrientResultContext";
+import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
+import { Alert, ScrollView, Text, View } from "react-native";
 
 type NutrientInfoBoxType = {
   nutrientFormula: string;
@@ -54,6 +55,7 @@ export default function results() {
   const [cropsdata, setCropsData] = useState(null);
   const [isCropsLoading, setIsCropsLoading] = useState(false);
   const [cropError, setCropError] = useState<null | { error: string }>(null);
+  const nutrientResults = useNutrientResultContext();
 
   const nutrientsInfo = useMemo(() => {
     const nutrientsInfo = [
@@ -140,6 +142,15 @@ export default function results() {
     return nutrientsInfo;
   }, []);
 
+  const nutrientsDataPrepared = useMemo(
+    () =>
+      nutrientsInfo.map((nutr) => ({
+        nutrient: nutr.nutrientFormula,
+        value: nutr.nutrientQty,
+      })),
+    [nutrientsInfo],
+  );
+
   async function getFertilizerSuggestions() {
     try {
       setIsLoading(true);
@@ -165,11 +176,8 @@ export default function results() {
         "🚀 ~ getPropSuggestions ~ fertilizerSuggestionsResponse:",
         fertilizerSuggestionsResponse,
       );
-      if (!fertilizerSuggestionsRequest.ok) {
-        setError(fertilizerSuggestionsResponse);
-        return;
-      }
       if (fertilizerSuggestionsRequest.ok) {
+        nutrientResults?.setResults(nutrientsDataPrepared);
         setData(fertilizerSuggestionsResponse);
         router.push("/fertilizer-recomm");
       } else {
@@ -204,12 +212,7 @@ export default function results() {
       setCropError(null);
       const cropSuggestionsRequest = await fetch(API_URL + "/crops", {
         method: "POST",
-        body: JSON.stringify(
-          nutrientsInfo.map((nutr) => ({
-            nutrient: nutr.nutrientFormula,
-            value: nutr.nutrientQty,
-          })),
-        ),
+        body: JSON.stringify(nutrientsDataPrepared),
         headers: {
           "Content-Type": "application/json",
         },
@@ -219,12 +222,10 @@ export default function results() {
         "🚀 ~ getCropsSuggestions ~ cropSuggestionsResponse:",
         cropSuggestionsResponse,
       );
-      if (!cropSuggestionsRequest.ok) {
-        setCropError(cropSuggestionsResponse);
-        return;
-      }
+
       if (cropSuggestionsRequest.ok) {
         setCropsData(cropSuggestionsResponse);
+        nutrientResults?.setResults(nutrientsDataPrepared);
         router.push("/crop-recomm");
       } else {
         Alert.alert("Error", cropSuggestionsResponse.error);

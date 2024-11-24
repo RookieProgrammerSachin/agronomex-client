@@ -2,6 +2,7 @@ import { View, Text, Image, ScrollView } from "react-native";
 import React from "react";
 import { DashboardLayout } from "@/components/layout";
 import Header from "@/components/Header";
+import { useNutrientResultContext } from "@/context/NutrientResultContext";
 
 type RecommendationCardProps = {
   imageURL: ReturnType<NodeRequire>;
@@ -66,6 +67,7 @@ const cropSuggestions: RecommendationCardProps[] = [
 ];
 
 export default function CropRecommendation() {
+  const nutrientResults = useNutrientResultContext();
   return (
     <DashboardLayout>
       <Header />
@@ -75,6 +77,10 @@ export default function CropRecommendation() {
           Crop recommendation
         </Text>
       </View>
+
+      <Text className="text-sm font-mono">
+        {JSON.stringify(nutrientResults?.results)}
+      </Text>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
