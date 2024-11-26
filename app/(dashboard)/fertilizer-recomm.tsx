@@ -4,49 +4,107 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { DashboardLayout } from "@/components/layout";
 import Header from "@/components/Header";
 import { MaterialIcons } from "@expo/vector-icons";
 import Button from "@/components/Button";
+import { API_URL } from "@/constants/url";
+import { useNutrientResultContext } from "@/context/NutrientResultContext";
 
 type FertilizerCardType = {
-  formula: string;
+  // formula: string;
   fertilizerName: string;
   description: string;
-  content: string;
-  unit: string;
+  // content: string;
+  // unit: string;
 };
 
 function FertilizerCard({
-  formula,
+  // formula,
   fertilizerName,
   description,
-  content,
-  unit,
+  // content,
+  // unit,
 }: FertilizerCardType) {
   return (
     <View className="w-[92vw] flex-row rounded-lg border border-blue-400/50 p-1">
       {/* Nutrient Logo Box */}
-      <View className="w-18 aspect-square rounded-md bg-blue-400 items-center justify-center p-2">
+      {/* <View className="w-18 aspect-square rounded-md bg-blue-400 items-center justify-center p-2">
         <Text className="text-3xl text-white">{formula}</Text>
-      </View>
+      </View> */}
       <View className="w-full ml-5">
         <Text className="text-blue-400 font-semibold text-lg">
           {fertilizerName}
         </Text>
         <Text className="text-blue-400">{description}</Text>
-        <Text className="text-blue-400 font-bold text-lg">
+        {/* <Text className="text-blue-400 font-bold text-lg">
           {content} {unit}
-        </Text>
+        </Text> */}
       </View>
     </View>
   );
 }
 
 export default function FertilizerRecommendation() {
-  const [showResults, setShowResults] = useState(false);
+  const nutrientResults = useNutrientResultContext();
+
+  const [data, setData] = useState<{
+    nutrient_levels: { [key: string]: string };
+    nutrient_suggestions: { nutrient: string; suggestion: string }[];
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<null | { error: string }>(null);
+
+  async function getFertilizerSuggestions() {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const fertilizerSuggestionsRequest = await fetch(
+        API_URL + "/fertilizers",
+        {
+          method: "POST",
+          body: JSON.stringify({ type: "", values: nutrientResults?.results }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const fertilizerSuggestionsResponse =
+        await fertilizerSuggestionsRequest.json();
+      console.log(
+        "🚀 ~ getPropSuggestions ~ fertilizerSuggestionsResponse:",
+        fertilizerSuggestionsResponse,
+      );
+      if (fertilizerSuggestionsRequest.ok) {
+        setData(fertilizerSuggestionsResponse);
+      } else {
+        Alert.alert("Error", fertilizerSuggestionsResponse.error);
+        setError(fertilizerSuggestionsResponse.error);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(
+          "🚀 ~ getPropSuggestions ~ error:",
+          error.name,
+          error.message,
+          // error.stack,
+        );
+        Alert.alert("Error", error.message);
+        setError({ error: error.message });
+      } else {
+        Alert.alert("Error", "Unknown error");
+        console.log("🚀 ~ getPropSuggestions ~ error:", error);
+      }
+      setError({
+        error: "Unknown error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -69,35 +127,35 @@ export default function FertilizerRecommendation() {
         placeholder="Land area name..."
         className="border border-grey-text/20 bg-gray-100 w-full rounded-md p-3 text-lg"
       />
-      <Button className="rounded-full" onPress={() => setShowResults(true)}>
+      <Button
+        className="rounded-full"
+        onPress={async () => {
+          getFertilizerSuggestions();
+        }}
+        disabled={isLoading}
+      >
         Suggest fertilizers
       </Button>
 
       {/* Mock of how the data should be displayed */}
-      {showResults && (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            width: "100%",
-            rowGap: 12,
-          }}
-        >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          width: "100%",
+          rowGap: 12,
+        }}
+      >
+        {data?.nutrient_suggestions.map((sugg, i) => (
           <FertilizerCard
-            fertilizerName="Alfalfa / Bloodmeal"
-            content="+21"
-            unit="mg/kg"
-            description="To increase Nitrogen content, add"
-            formula="N"
+            key={i}
+            fertilizerName={sugg.nutrient}
+            // content="+21"
+            // unit="mg/kg"
+            description={sugg.suggestion}
+            // formula="N"
           />
-          <FertilizerCard
-            fertilizerName="Muriate"
-            content="+18"
-            unit="kg/Ha"
-            description="To increase Nitrogen content, add"
-            formula="M"
-          />
-        </ScrollView>
-      )}
+        ))}
+      </ScrollView>
     </DashboardLayout>
   );
 }

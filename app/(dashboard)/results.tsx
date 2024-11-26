@@ -40,7 +40,7 @@ function NutrientInfoBox({
           {nutrientName}
         </Text>
       </View>
-      <View className="flex flex-row items-center gap-x-4 flex-1">
+      <View className="flex flex-row items-center gap-x-2 flex-1">
         <Text className={"text-4xl " + textColor}>{nutrientQty}</Text>
         <Text className={"text-lg " + textColor}>{nutrientUnit}</Text>
       </View>
@@ -49,9 +49,6 @@ function NutrientInfoBox({
 }
 
 export default function results() {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<null | { error: string }>(null);
   const [cropsdata, setCropsData] = useState(null);
   const [isCropsLoading, setIsCropsLoading] = useState(false);
   const [cropError, setCropError] = useState<null | { error: string }>(null);
@@ -107,16 +104,88 @@ export default function results() {
         nutrientQty: "78",
         nutrientUnit: "%",
       },
+      {
+        boxColor: "bg-[#63B10D10]",
+        textColor: "text-[#63B10D]",
+        nutrientFormula: "EC",
+        nutrientName: "",
+        nutrientQty: "0.00",
+        nutrientUnit: "S/cm",
+      },
+      {
+        boxColor: "bg-[#D2416E10]",
+        textColor: "text-[#D2416E]",
+        nutrientFormula: "OC",
+        nutrientName: "",
+        nutrientQty: "0.0",
+        nutrientUnit: "%",
+      },
+      {
+        boxColor: "bg-[#B1840D10]",
+        textColor: "text-[#B1840D]",
+        nutrientFormula: "S",
+        nutrientName: "",
+        nutrientQty: "0.0",
+        nutrientUnit: "ppm",
+      },
+      {
+        boxColor: "bg-[#7042C910]",
+        textColor: "text-[#7042C9]",
+        nutrientFormula: "Zn",
+        nutrientName: "",
+        nutrientQty: "0.0",
+        nutrientUnit: "ppm",
+      },
+      {
+        boxColor: "bg-[#63B10D10]",
+        textColor: "text-[#63B10D]",
+        nutrientFormula: "Fe",
+        nutrientName: "",
+        nutrientQty: "0.0",
+        nutrientUnit: "ppm",
+      },
+      {
+        boxColor: "bg-[#63B10D10]",
+        textColor: "text-[#63B10D]",
+        nutrientFormula: "Cu",
+        nutrientName: "",
+        nutrientQty: "0.0",
+        nutrientUnit: "ppm",
+      },
+      {
+        boxColor: "bg-[#63B10D10]",
+        textColor: "text-[#63B10D]",
+        nutrientFormula: "Mn",
+        nutrientName: "",
+        nutrientQty: "0.0",
+        nutrientUnit: "ppm",
+      },
+      {
+        boxColor: "bg-[#197BD210]",
+        textColor: "text-[#197BD2]",
+        nutrientFormula: "B",
+        nutrientName: "",
+        nutrientQty: "0.0",
+        nutrientUnit: "ppm",
+      },
     ];
 
     // Define ranges for each nutrient
     const ranges = {
-      N: { min: 70, max: 90 },
-      P: { min: 80, max: 130 },
-      K: { min: 70, max: 110 },
-      pH: { min: 6, max: 9 },
-      Temp: { min: 32, max: 45 },
-      Humidity: { min: 60, max: 90 },
+      N: { min: 70, max: 90 }, // Nitrogen in kg/ha
+      P: { min: 80, max: 130 }, // Phosphorus in kg/ha
+      K: { min: 70, max: 110 }, // Potassium in kg/ha
+      pH: { min: 6, max: 9 }, // pH level
+      Temp: { min: 32, max: 45 }, // Temperature in °C
+      Humidity: { min: 60, max: 90 }, // Humidity in %
+      EC: { min: 0.1, max: 4.0 }, // Electrical Conductivity in S/cm
+      OC: { min: 0.5, max: 2.5 }, // Organic Carbon in %
+      S: { min: 10, max: 50 }, // Sulfur in ppm
+      Zn: { min: 0.5, max: 10 }, // Zinc in ppm
+      Fe: { min: 2, max: 50 }, // Iron in ppm
+      Cu: { min: 0.2, max: 5 }, // Copper in ppm
+      Mn: { min: 1, max: 50 }, // Manganese in ppm
+      B: { min: 0.2, max: 5 }, // Boron in ppm
     };
 
     // Function to generate a random number within a given range with up to 2 decimal places
@@ -150,61 +219,6 @@ export default function results() {
       })),
     [nutrientsInfo],
   );
-
-  async function getFertilizerSuggestions() {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const fertilizerSuggestionsRequest = await fetch(
-        API_URL + "/fertilizers",
-        {
-          method: "POST",
-          body: JSON.stringify(
-            nutrientsInfo.map((nutr) => ({
-              nutrient: nutr.nutrientFormula,
-              value: nutr.nutrientQty,
-            })),
-          ),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      const fertilizerSuggestionsResponse =
-        await fertilizerSuggestionsRequest.json();
-      console.log(
-        "🚀 ~ getPropSuggestions ~ fertilizerSuggestionsResponse:",
-        fertilizerSuggestionsResponse,
-      );
-      if (fertilizerSuggestionsRequest.ok) {
-        nutrientResults?.setResults(nutrientsDataPrepared);
-        setData(fertilizerSuggestionsResponse);
-        router.push("/fertilizer-recomm");
-      } else {
-        Alert.alert("Error", fertilizerSuggestionsResponse.error);
-        setError(fertilizerSuggestionsResponse.error);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(
-          "🚀 ~ getPropSuggestions ~ error:",
-          error.name,
-          error.message,
-          // error.stack,
-        );
-        Alert.alert("Error", error.message);
-        setError({ error: error.message });
-      } else {
-        Alert.alert("Error", "Unknown error");
-        console.log("🚀 ~ getPropSuggestions ~ error:", error);
-      }
-      setError({
-        error: "Unknown error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   async function getCropSuggestions() {
     try {
@@ -276,9 +290,9 @@ export default function results() {
       <View className="flex-col gap-y-1 items-center w-full">
         <Button
           onPress={() => {
-            getFertilizerSuggestions();
+            nutrientResults?.setResults(nutrientsDataPrepared);
+            router.push("/fertilizer-recomm");
           }}
-          disabled={isLoading}
         >
           Suggest Fertilizers
         </Button>
