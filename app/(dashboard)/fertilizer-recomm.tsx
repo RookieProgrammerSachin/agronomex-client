@@ -1,18 +1,21 @@
+import Button from "@/components/Button";
+import Header from "@/components/Header";
+import { DashboardLayout } from "@/components/layout";
+import { API_URL } from "@/constants/url";
+import { useNutrientResultContext } from "@/context/NutrientResultContext";
+import useAuth from "@/hooks/useAuth";
+import { db } from "@/utils/firebaseConfig";
+import { MaterialIcons } from "@expo/vector-icons";
+import { doc, setDoc } from "firebase/firestore";
+import React, { useState } from "react";
 import {
-  View,
+  Alert,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
-  Alert,
+  View,
 } from "react-native";
-import React, { useState } from "react";
-import { DashboardLayout } from "@/components/layout";
-import Header from "@/components/Header";
-import { MaterialIcons } from "@expo/vector-icons";
-import Button from "@/components/Button";
-import { API_URL } from "@/constants/url";
-import { useNutrientResultContext } from "@/context/NutrientResultContext";
 
 type FertilizerCardType = {
   // formula: string;
@@ -50,6 +53,7 @@ function FertilizerCard({
 
 export default function FertilizerRecommendation() {
   const nutrientResults = useNutrientResultContext();
+  const { user } = useAuth();
 
   const [data, setData] = useState<{
     nutrient_levels: { [key: string]: string };
@@ -87,6 +91,22 @@ export default function FertilizerRecommendation() {
           return;
         }
         setData(fertilizerSuggestionsResponse);
+        if (nutrientResults?.resultId) {
+          await setDoc(
+            doc(
+              db,
+              "soil-test",
+              user!.uid,
+              "reports",
+              nutrientResults.resultId,
+            ),
+            {
+              suggestions: fertilizerSuggestionsResponse,
+              cropWanted: fertilizerName,
+            },
+            { merge: true },
+          );
+        }
       } else {
         Alert.alert("Error", fertilizerSuggestionsResponse.error);
         setError(fertilizerSuggestionsResponse.error);

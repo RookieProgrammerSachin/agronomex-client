@@ -10,6 +10,8 @@ type ResultType =
 export type NutrientResultContextType = {
   results: ResultType;
   setResults: React.Dispatch<React.SetStateAction<ResultType>>;
+  resultId: string | null;
+  setResultId: React.Dispatch<React.SetStateAction<string | null>>;
 } | null;
 
 export const NutrientResultContext =
@@ -23,12 +25,15 @@ export function NutrientResultContextProvider({
   children,
 }: React.PropsWithChildren) {
   const [results, setResults] = useState<ResultType>(null);
+  const [resultId, setResultId] = useState<string | null>(null);
 
   return (
     <NutrientResultContext.Provider
       value={{
         results,
         setResults,
+        resultId,
+        setResultId,
       }}
     >
       {children}

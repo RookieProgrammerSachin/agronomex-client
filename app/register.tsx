@@ -1,20 +1,21 @@
+import useAuth from "@/hooks/useAuth";
+import { auth, db } from "@/utils/firebaseConfig";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Link, router } from "expo-router";
+import { FirebaseError } from "firebase/app";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  Pressable,
   ActivityIndicator,
   Alert,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, router } from "expo-router";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/utils/firebaseConfig";
-import { FirebaseError } from "firebase/app";
-import useAuth from "@/hooks/useAuth";
-import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Register() {
   const { user } = useAuth();
@@ -65,7 +66,14 @@ export default function Register() {
     try {
       setLoading(true);
       const us = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(us.user, { displayName: name });
+      updateProfile(us.user, { displayName: name }).then((x) => {
+        console.log("name added", name);
+      });
+      setDoc(doc(db, "soil-test", us.user.uid), { createdAt: new Date() })
+        .then()
+        .catch((e) => {
+          console.log(e);
+        });
       // Registration successful, navigate to login
       Alert.alert("Success", "Account created successfully!");
     } catch (error) {

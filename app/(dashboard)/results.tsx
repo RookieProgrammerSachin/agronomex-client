@@ -3,9 +3,13 @@ import Header from "@/components/Header";
 import { DashboardLayout } from "@/components/layout";
 import { API_URL } from "@/constants/url";
 import { useNutrientResultContext } from "@/context/NutrientResultContext";
+import useAuth from "@/hooks/useAuth";
+import { formatDate } from "@/utils/date";
+import { db } from "@/utils/firebaseConfig";
 import { router } from "expo-router";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import React, { useMemo, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 
 type NutrientInfoBoxType = {
   nutrientFormula: string;
@@ -53,6 +57,7 @@ export default function results() {
   const [isCropsLoading, setIsCropsLoading] = useState(false);
   const [cropError, setCropError] = useState<null | { error: string }>(null);
   const nutrientResults = useNutrientResultContext();
+  const { user } = useAuth();
 
   const nutrientsInfo = useMemo(() => {
     const nutrientsInfo = [
@@ -267,6 +272,22 @@ export default function results() {
     }
   }
 
+  async function getNutrientSuggestions() {
+    setIsCropsLoading(true);
+    const docID = formatDate(new Date());
+    nutrientResults?.setResults(nutrientsDataPrepared);
+    nutrientResults?.setResultId(docID);
+    const userDocRef = doc(db, "soil-test", user!.uid);
+    await setDoc(doc(userDocRef, "reports", docID), {
+      createdAt: new Date(),
+      nutrients: Object.fromEntries(
+        nutrientsDataPrepared.map((x) => [x.nutrient, x.value]),
+      ),
+    });
+    setIsCropsLoading(false);
+    router.push("/fertilizer-recomm");
+  }
+
   return (
     <DashboardLayout>
       <Header />
@@ -288,13 +309,12 @@ export default function results() {
         </ScrollView>
       </View>
       <View className="flex-col gap-y-1 items-center w-full">
-        <Button
-          onPress={() => {
-            nutrientResults?.setResults(nutrientsDataPrepared);
-            router.push("/fertilizer-recomm");
-          }}
-        >
-          Suggest Fertilizers
+        <Button onPress={getNutrientSuggestions}>
+          {isCropsLoading ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            "Suggest Fertilizers"
+          )}
         </Button>
         <Button disabled={true}>Suggest Crops</Button>
       </View>
