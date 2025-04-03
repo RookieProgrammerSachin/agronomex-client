@@ -1,9 +1,22 @@
-import React from "react";
-import { Stack } from "expo-router";
+import React, { useEffect } from "react";
+import { Stack, Redirect } from "expo-router";
 import { DeviceConnectivityContextProvider } from "@/context/DeviceConnectivityContext";
 import { NutrientResultContextProvider } from "@/context/NutrientResultContext";
+import useAuth from "@/hooks/useAuth";
 
 export default function Layout() {
+  const { user, isLoading } = useAuth();
+
+  // Show loading state if still checking auth
+  if (isLoading) {
+    return null;
+  }
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return <Redirect href="/" />;
+  }
+
   return (
     <DeviceConnectivityContextProvider>
       <NutrientResultContextProvider>

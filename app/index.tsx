@@ -2,17 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link, Redirect, router } from "expo-router";
 import { useEffect } from "react";
 import { Image, Text, View } from "react-native";
+import useAuth from "@/hooks/useAuth";
 
 export default function Index() {
-  /** Temporary useEffect to redirect to /home becahse expo restartsr entire app if changes made
-   * and its annoying to navigate to that page over and over manually
-   */
+  const { user, isLoading } = useAuth();
 
-  // Even this is throwing new error
-  // useEffect(() => {
-  //   router.push("/home")
-  // }, [])
-  // return <Redirect href={"/results"} />;
+  // Redirect to dashboard if user is logged in
+  if (!isLoading && user) {
+    return <Redirect href="/home" />;
+  }
 
   return (
     <View

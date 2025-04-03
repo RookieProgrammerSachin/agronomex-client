@@ -1,7 +1,7 @@
 import { Link, router } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Button,
+  ActivityIndicator,
   Image,
   Pressable,
   SafeAreaView,
@@ -9,8 +9,25 @@ import {
   TextInput,
   View,
 } from "react-native";
+import useAuth from "@/hooks/useAuth";
 
 function LoginPage() {
+  const { login, isLoading, error, user } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.replace("/home");
+    }
+  }, [user]);
+
+  const handleLogin = async () => {
+    if (!email || !password) return;
+    await login(email, password);
+  };
+
   return (
     <SafeAreaView>
       <View
@@ -28,6 +45,10 @@ function LoginPage() {
         <Image source={require("@/assets/images/logo.png")} />
         <Text>Login to your account</Text>
 
+        {error ? (
+          <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+        ) : null}
+
         {/* Text input for email */}
         <TextInput
           style={{
@@ -43,7 +64,11 @@ function LoginPage() {
             fontSize: 18,
           }}
           placeholder="Email"
-        ></TextInput>
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
 
         {/* Text input for password */}
         <TextInput
@@ -61,7 +86,9 @@ function LoginPage() {
           }}
           placeholder="Password"
           secureTextEntry
-        ></TextInput>
+          value={password}
+          onChangeText={setPassword}
+        />
 
         <Link
           href={"/forgot"}
@@ -80,19 +107,25 @@ function LoginPage() {
             backgroundColor: "#6FCB4F",
             width: "100%",
             borderRadius: 10,
+            opacity: isLoading ? 0.7 : 1,
           }}
-          onPress={() => router.push("/home")}
+          onPress={handleLogin}
+          disabled={isLoading}
         >
-          <Text
-            style={{
-              color: "#eee",
-              fontWeight: 600,
-              textAlign: "center",
-              fontSize: 20,
-            }}
-          >
-            Login
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text
+              style={{
+                color: "#eee",
+                fontWeight: 600,
+                textAlign: "center",
+                fontSize: 20,
+              }}
+            >
+              Login
+            </Text>
+          )}
         </Pressable>
 
         <Text>

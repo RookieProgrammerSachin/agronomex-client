@@ -1,7 +1,9 @@
 import { Stack } from "expo-router";
+import { AuthContextProvider } from "@/context/AuthContext";
 
 export default function RootLayout() {
   return (
+    <AuthContextProvider>
       <Stack>
         <Stack.Screen name="(dashboard)" options={{
           headerShown: false
@@ -19,5 +21,6 @@ export default function RootLayout() {
           headerShown: false
         }} />
       </Stack>
+    </AuthContextProvider>
   );
 }

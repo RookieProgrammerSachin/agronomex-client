@@ -7,20 +7,32 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/utils/firebaseConfig";
 import { FirebaseError } from "firebase/app";
+import useAuth from "@/hooks/useAuth";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Register() {
+  const { user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [error, setError] = useState("");
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.replace("/home");
+    }
+  }, [user]);
 
   const handleSignUp = async () => {
     setError("");
@@ -52,10 +64,10 @@ export default function Register() {
 
     try {
       setLoading(true);
-      await createUserWithEmailAndPassword(auth, email, password);
+      const us = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(us.user, { displayName: name });
       // Registration successful, navigate to login
-      Alert.alert("Success", "Account created successfully. Please sign in.");
-      router.push("/login");
+      Alert.alert("Success", "Account created successfully!");
     } catch (error) {
       console.error("Error creating account:", error);
       // Handle specific firebase errors
@@ -117,22 +129,44 @@ export default function Register() {
         />
 
         {/* Password input */}
-        <TextInput
-          className="border border-[#eaeaea] w-full bg-[#eee] shadow-sm shadow-[#333] p-3 rounded-md text-lg"
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View className="w-full">
+          <TextInput
+            className="border border-[#eaeaea] w-full bg-[#eee] shadow-sm shadow-[#333] p-3 rounded-md text-lg"
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!passwordVisible}
+          />
+          <Pressable
+            className="absolute right-3 top-4"
+            onPress={() => setPasswordVisible(!passwordVisible)}
+          >
+            <MaterialIcons name="password" size={24} color="black" />
+            {passwordVisible && (
+              <Text className=" text-3xl absolute right-1.5 -top-1">/</Text>
+            )}
+          </Pressable>
+        </View>
 
         {/* Confirm Password input */}
-        <TextInput
-          className="border border-[#eaeaea] w-full bg-[#eee] shadow-sm shadow-[#333] p-3 rounded-md text-lg"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
+        <View className="w-full">
+          <TextInput
+            className="border border-[#eaeaea] w-full bg-[#eee] shadow-sm shadow-[#333] p-3 rounded-md text-lg"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!confirmPasswordVisible}
+          />
+          <Pressable
+            className="absolute right-3 top-4"
+            onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+          >
+            <MaterialIcons name="password" size={24} color="black" />
+            {confirmPasswordVisible && (
+              <Text className=" text-3xl absolute right-1.5 -top-1">/</Text>
+            )}
+          </Pressable>
+        </View>
 
         <Pressable
           style={{
