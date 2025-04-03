@@ -296,9 +296,7 @@ export default function results() {
         >
           Suggest Fertilizers
         </Button>
-        <Button disabled={isCropsLoading} onPress={() => getCropSuggestions()}>
-          Suggest Crops
-        </Button>
+        <Button disabled={true}>Suggest Crops</Button>
       </View>
     </DashboardLayout>
   );

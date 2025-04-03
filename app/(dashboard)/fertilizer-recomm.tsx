@@ -57,8 +57,11 @@ export default function FertilizerRecommendation() {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<null | { error: string }>(null);
+  const [fertilizerName, setFertilizerName] = useState<string>();
 
   async function getFertilizerSuggestions() {
+    if (fertilizerName?.toLocaleLowerCase().trim() !== "paddy")
+      return Alert.alert("This crop is not supported!");
     try {
       setIsLoading(true);
       setError(null);
@@ -79,6 +82,10 @@ export default function FertilizerRecommendation() {
         fertilizerSuggestionsResponse,
       );
       if (fertilizerSuggestionsRequest.ok) {
+        if (fertilizerSuggestionsResponse.error) {
+          setError(fertilizerSuggestionsResponse.error);
+          return;
+        }
         setData(fertilizerSuggestionsResponse);
       } else {
         Alert.alert("Error", fertilizerSuggestionsResponse.error);
@@ -115,6 +122,8 @@ export default function FertilizerRecommendation() {
       <View className="w-full relative">
         <TextInput
           inputMode="search"
+          value={fertilizerName}
+          onChangeText={setFertilizerName}
           placeholder="Search for crops..."
           className="border border-grey-text/20 bg-gray-100 w-full rounded-md p-3 text-lg"
         />
