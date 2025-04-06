@@ -7,3 +7,14 @@ export function formatDate(date: Date) {
   const seconds = String(date.getSeconds()).padStart(2, "0");
   return `${day}-${month}-${year}T${hours}:${minutes}:${seconds}`;
 }
+
+export function toLocaleDate(date: Date) {
+  return date.toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour12: true,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}

@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { Stack, Redirect } from "expo-router";
 import { DeviceConnectivityContextProvider } from "@/context/DeviceConnectivityContext";
 import { NutrientResultContextProvider } from "@/context/NutrientResultContext";
 import useAuth from "@/hooks/useAuth";
+import { Redirect, Stack } from "expo-router";
+import React from "react";
 
 export default function Layout() {
   const { user, isLoading } = useAuth();
@@ -50,6 +50,14 @@ export default function Layout() {
             options={{
               headerShown: false,
             }}
+          />
+          <Stack.Screen
+            name="history/[docId]"
+            options={({ route }) => ({
+              headerShown: false,
+              // @ts-expect-error docid illa
+              title: route?.params?.docId,
+            })}
           />
         </Stack>
       </NutrientResultContextProvider>

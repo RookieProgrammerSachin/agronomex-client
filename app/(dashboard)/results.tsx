@@ -7,7 +7,7 @@ import useAuth from "@/hooks/useAuth";
 import { formatDate } from "@/utils/date";
 import { db } from "@/utils/firebaseConfig";
 import { router } from "expo-router";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import React, { useMemo, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 
