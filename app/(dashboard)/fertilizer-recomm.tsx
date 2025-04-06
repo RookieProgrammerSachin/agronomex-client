@@ -119,6 +119,7 @@ export default function FertilizerRecommendation() {
           error.message,
           // error.stack,
         );
+        console.log(JSON.stringify(error));
         Alert.alert("Error", error.message);
         setError({ error: error.message });
       } else {
