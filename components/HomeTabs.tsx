@@ -110,6 +110,14 @@ export default function HomeTabs() {
                 Test now
               </Text>
             </Pressable>
+            <Pressable
+              className={`rounded-md bg-lime-400 mt-4 w-full px-6 items-center py-3`}
+              onPress={() => router.push("/manual")}
+            >
+              <Text className={`text-lg text-white font-semibold`}>
+                Enter manually
+              </Text>
+            </Pressable>
           </View>
         )}
         {activeTab === 1 && (

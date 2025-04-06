@@ -52,6 +52,12 @@ export default function Layout() {
             }}
           />
           <Stack.Screen
+            name="manual"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="history/[docId]"
             options={({ route }) => ({
               headerShown: false,
