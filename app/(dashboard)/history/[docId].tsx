@@ -9,24 +9,6 @@ import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 
-type NutrientCardType = {
-  nutrientName: string;
-  qty: string;
-};
-
-function NutrientCard({ nutrientName, qty }: NutrientCardType) {
-  return (
-    <View className="w-[92vw] flex-row rounded-lg border border-blue-400/50 p-1">
-      <View className="w-full ml-5">
-        <Text className="text-blue-400 font-semibold text-lg">
-          {nutrientName}
-        </Text>
-        <Text className="text-blue-400">{qty}</Text>
-      </View>
-    </View>
-  );
-}
-
 export default function History() {
   const params = useGlobalSearchParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -74,9 +56,9 @@ export default function History() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           flex: 1,
-          width: "100%",
-          rowGap: 12,
+          rowGap: 6,
         }}
+        className=" w-full"
       >
         {isLoading && !data ? (
           <ActivityIndicator size="large" />
@@ -93,6 +75,49 @@ export default function History() {
                   {data.cropWanted}
                 </Text>
               </>
+            )}
+
+            {data.nutrients && (
+              <ScrollView className="mt-2 flex-1">
+                <Text className="text-xl font-semibold mb-2">
+                  Soil Nutrients:
+                </Text>
+                {Object.entries(data.nutrients).map(([nutrient, quantity]) => (
+                  <View
+                    key={nutrient}
+                    className="border flex-col flex gap-y-2 mb-4 border-green-500/50 rounded-md p-3"
+                  >
+                    <View className="flex-row justify-between items-center">
+                      <Text className="text-lg text-green-700 font-medium">
+                        {nutrient}
+                      </Text>
+                      <Text className="text-lg">{quantity}</Text>
+                    </View>
+                    {data.cropWanted &&
+                      data.suggestions?.nutrient_suggestions &&
+                      data.suggestions.nutrient_suggestions.length > 0 && (
+                        <View className="flex-col">
+                          <Text className="font-semibold">Suggestions:</Text>
+                          {(() => {
+                            const sugg =
+                              data.suggestions.nutrient_suggestions.find(
+                                (item) => (item.nutrient = nutrient),
+                              );
+                            if (sugg) {
+                              return (
+                                <View className="flex-row p-1">
+                                  <Text className="flex-1">
+                                    {sugg.suggestion}
+                                  </Text>
+                                </View>
+                              );
+                            } else return "";
+                          })()}
+                        </View>
+                      )}
+                  </View>
+                ))}
+              </ScrollView>
             )}
           </>
         ) : (
