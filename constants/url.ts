@@ -1,2 +1,2 @@
-export const API_URL = process.env.EXPO_PUBLIC_API_URL; // does not fukcing work!!
+export const API_URL = "https://stem-for-society-api-lnj3a.ondigitalocean.app";
 // export const API_URL = "";

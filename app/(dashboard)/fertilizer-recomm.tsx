@@ -69,16 +69,14 @@ export default function FertilizerRecommendation() {
     try {
       setIsLoading(true);
       setError(null);
-      const fertilizerSuggestionsRequest = await fetch(
-        API_URL + "/fertilizers",
-        {
-          method: "POST",
-          body: JSON.stringify({ type: "", values: nutrientResults?.results }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const fertilizerSuggestionsRequest = await fetch(API_URL + "/fert", {
+        method: "POST",
+        body: JSON.stringify({ type: "", values: nutrientResults?.results }),
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
+      console.log("🚀 ~ getFertilizerSuggestions ~ API_URL:", API_URL);
       const fertilizerSuggestionsResponse =
         await fertilizerSuggestionsRequest.json();
       console.log(
